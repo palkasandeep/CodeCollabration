@@ -1,0 +1,22 @@
+{
+  "name": "codeeditor",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Backend/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node Backend/index.js",
+    "dev": "nodemon Backend/index.js",
+    "build": "cd frontend && npm install && npm run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}

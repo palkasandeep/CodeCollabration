@@ -1,0 +1,195 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  color: #fff;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.join-Container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(to right, #1e3c72, #2a5298);
+  animation: gradientShift 10s infinite alternate;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+.join-form {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 3rem;
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  text-align: center;
+  width: 350px;
+  animation: fadeIn 1s ease forwards;
+  transform: translateY(-20px);
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.join-form h1 {
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  color: #fff;
+}
+
+.join-form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  transition: all 0.3s ease;
+}
+
+.join-form input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.join-form input:focus {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.03);
+}
+
+.join-form button {
+  width: 100%;
+  padding: 12px;
+  background: #ff416c;
+  background: linear-gradient(to right, #ff4b2b, #ff416c);
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.join-form button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #ff4b2b;
+}
+.editor-container {
+  display: flex;
+  height: 100vh;
+  background: #1e1e2f;
+}
+
+.sidebar {
+  width: 300px;
+  padding: 1.5rem;
+  background: #282c34;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  border-right: 2px solid #444;
+}
+
+.room-info button,
+.lang-select select,
+.leave-button {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #61dafb;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.leave-button {
+  background-color: crimson;
+  color: white;
+}
+
+.user-info ul {
+  list-style: none;
+  padding: 0;
+}
+
+.typing-indicator {
+  font-style: italic;
+  color: #ddd;
+}
+
+.code-editor {
+  flex: 1;
+  padding: 1rem;
+}
+.chat-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  max-height: 400px;
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-box {
+  flex: 1;
+  overflow-y: scroll;
+  margin-bottom: 10px;
+}
+
+.chat-box ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.chat-box li {
+  margin: 5px 0;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
+
+button {
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
