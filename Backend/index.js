@@ -2,108 +2,78 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import path from 'path';
-import cors from 'cors';
-import { fileURLToPath } from 'url';
-
-// Setup for __dirname in ES Module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const app = express();
-app.use(cors());
-
-// Create HTTP server and bind Socket.IO
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
+  cors: { origin: "*" },
 });
 
-// Store room data
-const roomData = new Map();
+const rooms = new Map(); // To store users in rooms
 
 io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
-
   let currentRoom = null;
   let currentUser = null;
 
+  // User joins a room
   socket.on("join", ({ roomId, userName }) => {
     if (currentRoom) {
       socket.leave(currentRoom);
-      updateRoomData(currentRoom, currentUser, 'leave');
+      rooms.get(currentRoom)?.delete(currentUser);
+      io.to(currentRoom).emit("user-joined", Array.from(rooms.get(currentRoom) || []));
     }
 
     currentRoom = roomId;
     currentUser = userName;
     socket.join(roomId);
 
-    if (!roomData.has(roomId)) {
-      roomData.set(roomId, {
-        users: new Set(),
-        code: '',
-        language: 'javascript'
-      });
+    if (!rooms.has(roomId)) {
+      rooms.set(roomId, new Set());
     }
 
-    const room = roomData.get(roomId);
-    room.users.add(userName);
-
-    socket.emit("codeupdate", room.code);
-    io.to(roomId).emit("user-joined", Array.from(room.users));
+    rooms.get(roomId).add(userName);
+    io.to(roomId).emit("user-joined", Array.from(rooms.get(roomId)));
   });
 
+  // Real-time code update
   socket.on("Codechange", ({ roomId, code }) => {
-    if (roomData.has(roomId)) {
-      roomData.get(roomId).code = code;
-      socket.to(roomId).emit("codeupdate", code);
-    }
+    socket.to(roomId).emit("codeupdate", code);
   });
 
+  // Chat message
   socket.on("send-message", (message) => {
     io.to(message.roomId).emit("chat-message", message);
   });
 
+  // Language change event
+  socket.on("language-change", ({ roomId, language }) => {
+    socket.to(roomId).emit("language-updated", { language });
+  });
+
+  // Drawing pad updates
+  socket.on("draw", ({ roomId, drawData }) => {
+    socket.to(roomId).emit("draw-update", drawData);
+  });
+
+  // Typing event
   socket.on("typing", ({ roomId, user }) => {
     socket.to(roomId).emit("user-typing", { user });
   });
 
-  socket.on("leaveRoom", ({ roomId, userName }) => {
-    updateRoomData(roomId, userName, 'leave');
-    socket.leave(roomId);
-    io.to(roomId).emit("user-joined", Array.from(roomData.get(roomId)?.users || []));
-  });
-
+  // Disconnect event
   socket.on("disconnect", () => {
     if (currentRoom && currentUser) {
-      updateRoomData(currentRoom, currentUser, 'leave');
-      io.to(currentRoom).emit("user-joined", Array.from(roomData.get(currentRoom)?.users || []));
+      rooms.get(currentRoom)?.delete(currentUser);
+      io.to(currentRoom).emit("user-joined", Array.from(rooms.get(currentRoom) || []));
     }
-    console.log(`User disconnected: ${socket.id}`);
+    console.log("User Disconnected", socket.id);
   });
-
-  function updateRoomData(roomId, user, action) {
-    if (roomData.has(roomId)) {
-      const room = roomData.get(roomId);
-      action === 'join' ? room.users.add(user) : room.users.delete(user);
-
-      if (room.users.size === 0) {
-        roomData.delete(roomId);
-      }
-    }
-  }
 });
 
-// Serve frontend files
-app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
-});
+const port = process.env.PORT || 5000;
 
-// Start server
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+
+const __dirname = path.resolve()
+
+server.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
